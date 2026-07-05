@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<title>Omni-CAD</title>
+	<title>LunddrenDev-Application</title>
 	<style>
-		body, html {
+		@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
+
+		body,
+		html {
 			margin: 0;
 			padding: 0;
 			width: 100%;
 			height: 100%;
 			overflow: hidden;
+			background-color: #020617;
+			/* Very deep blue/black */
 		}
+
 		iframe {
 			position: absolute;
 			top: 0;
@@ -20,48 +27,187 @@
 			height: 100%;
 			border: none;
 		}
+
 		#start-overlay {
 			position: absolute;
 			top: 0;
 			left: 0;
 			width: 100%;
 			height: 100%;
-			background-color: #1e1e1e;
+			background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
 			color: #fff;
 			display: flex;
+			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			font-size: 24px;
-			cursor: pointer;
+			font-family: 'Outfit', sans-serif;
 			z-index: 1000;
-			transition: opacity 0.5s ease;
+			transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		/* Subtle moving background glow */
+		#start-overlay::before {
+			content: '';
+			position: absolute;
+			width: 60vh;
+			height: 60vh;
+			background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+			animation: pulseGlow 8s ease-in-out infinite alternate;
+			z-index: -1;
+		}
+
+		.brand-text {
+			font-size: 38px;
+			font-weight: 600;
+			letter-spacing: 4px;
+			background: linear-gradient(90deg, #ffffff 0%, #93c5fd 50%, #ffffff 100%);
+			background-size: 200% auto;
+			color: transparent;
+			-webkit-background-clip: text;
+			background-clip: text;
+			animation: shine 3s linear infinite, slideUpFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+			opacity: 0;
+			transform: translateY(30px);
+			text-transform: uppercase;
+		}
+
+		.subtitle {
+			font-size: 13px;
+			font-weight: 300;
+			letter-spacing: 8px;
+			color: #64748b;
+			margin-top: 16px;
+			opacity: 0;
+			animation: slideUpFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
+		}
+
+		/* Minimalist circular spinner */
+		.spinner {
+			width: 40px;
+			height: 40px;
+			margin-top: 40px;
+			border: 2px solid rgba(59, 130, 246, 0.1);
+			border-top: 2px solid #3b82f6;
+			border-radius: 50%;
+			animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite, fadeIn 1s ease forwards 0.6s;
+			opacity: 0;
+		}
+
+		@keyframes shine {
+			to {
+				background-position: 200% center;
+			}
+		}
+
+		@keyframes slideUpFade {
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes fadeIn {
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes pulseGlow {
+			0% {
+				transform: scale(1);
+				opacity: 0.5;
+			}
+
+			100% {
+				transform: scale(1.5);
+				opacity: 0.8;
+			}
+		}
+
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+
+		/* The hide animation class */
+		.hide-anim {
+			opacity: 0 !important;
+			transform: scale(1.05) !important;
+			pointer-events: none;
 		}
 	</style>
 </head>
+
 <body>
-	<div id="start-overlay">Just click anywhere to start in full screen</div>
-	<iframe src="https://script.google.com/macros/s/AKfycbxW6-nGbkJ4iEi_syTUN1sVz5W9xPoKHGVhClj0Lk5WOjk2pdfUjnQdhmb1Z-eM6IfY/exec" scrolling="no" allowfullscreen></iframe>
-	
+	<div id="start-overlay">
+		<div class="brand-text">LunddrenDev-Applications</div>
+		<div class="subtitle">INITIALIZING SECURE ENVIRONMENT</div>
+		<div class="spinner"></div>
+	</div>
+	<iframe
+		src="https://script.google.com/macros/s/AKfycbxW6-nGbkJ4iEi_syTUN1sVz5W9xPoKHGVhClj0Lk5WOjk2pdfUjnQdhmb1Z-eM6IfY/exec"
+		scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
+
 	<script>
-		document.getElementById('start-overlay').addEventListener('click', function() {
+		const overlay = document.getElementById('start-overlay');
+
+		function goFullscreen() {
 			var docElm = document.documentElement;
-			if (docElm.requestFullscreen) {
-				docElm.requestFullscreen();
-			} else if (docElm.mozRequestFullScreen) {
-				docElm.mozRequestFullScreen();
-			} else if (docElm.webkitRequestFullScreen) {
-				docElm.webkitRequestFullScreen();
-			} else if (docElm.msRequestFullscreen) {
-				docElm.msRequestFullscreen();
+			var requestFS = docElm.requestFullscreen || docElm.mozRequestFullScreen || docElm.webkitRequestFullScreen || docElm.msRequestFullscreen;
+			if (requestFS) {
+				requestFS.call(docElm).catch(err => {
+					console.log("Fullscreen request failed:", err);
+				});
 			}
-			
-			// Fade out the overlay
-			this.style.opacity = '0';
+		}
+
+		function hideOverlay() {
+			overlay.classList.add('hide-anim');
 			setTimeout(() => {
-				this.style.display = 'none';
-			}, 500);
+				overlay.style.display = 'none';
+				overlay.classList.remove('hide-anim');
+			}, 1200); // Wait for the transition to finish
+		}
+
+		function showOverlay() {
+			overlay.style.display = 'flex';
+			// Slight delay so display:flex applies before removing the class
+			setTimeout(() => {
+				overlay.style.opacity = '1';
+			}, 10);
+		}
+
+		// Automatically hide the cinematic loading screen after 3.5 seconds
+		setTimeout(() => {
+			hideOverlay();
+		}, 3500);
+
+		// If the user clicks while the loading screen is up, force fullscreen early
+		overlay.addEventListener('click', function () {
+			goFullscreen();
+			hideOverlay();
 		});
+
+		// Fallback: Catch any rogue clicks/touches on the wrapper body to force fullscreen later
+		document.body.addEventListener('click', function (e) {
+			const isFullscreen = document.fullscreenElement || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement;
+			if (!isFullscreen) {
+				goFullscreen();
+			}
+		}, true);
+
+		document.body.addEventListener('touchstart', function (e) {
+			const isFullscreen = document.fullscreenElement || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement;
+			if (!isFullscreen) {
+				goFullscreen();
+			}
+		}, { passive: true, capture: true });
 	</script>
 </body>
+
 </html>
