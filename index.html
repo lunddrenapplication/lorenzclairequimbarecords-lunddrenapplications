@@ -228,17 +228,24 @@
 		// Initial setup
 		manageEnforcer();
 
-		// Whenever they enter or exit fullscreen, check the state
+		// Whenever they enter or exit fullscreen, or the window resizes, check the state
 		document.addEventListener('fullscreenchange', manageEnforcer);
 		document.addEventListener('webkitfullscreenchange', manageEnforcer);
 		document.addEventListener('mozfullscreenchange', manageEnforcer);
 		document.addEventListener('MSFullscreenChange', manageEnforcer);
+		window.addEventListener('resize', manageEnforcer);
+		document.addEventListener('visibilitychange', () => {
+			if (document.visibilityState === 'visible') {
+				manageEnforcer();
+			}
+		});
 
 		// The very next touch/click forces fullscreen and unblocks the app
 		function handleEnforcerTap(e) {
 			goFullscreen();
-			// We don't hide it immediately; we let the 'fullscreenchange' event hide it
-			// once the browser actually enters fullscreen.
+			// Instantly hide the enforcer so the app is never accidentally blocked, 
+			// even if the browser doesn't properly fire a 'fullscreenchange' event.
+			enforcer.style.display = 'none';
 		}
 
 		enforcer.addEventListener('click', handleEnforcerTap);
